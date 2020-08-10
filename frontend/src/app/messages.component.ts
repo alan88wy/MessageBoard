@@ -23,14 +23,14 @@ import { WebService } from './web.service';
 })
 export class MessagesComponent implements OnInit {
 
-  messages: object = [];
+  messages = [];
 
   constructor(private webService: WebService) { };
 
   ngOnInit() {
     this.webService.getMessages()
       .subscribe(
-        data => this.messages = data,
+        (data: any[]) => this.messages = data,
         err => console.error('Error getting messages: ' + err)
       );
 
