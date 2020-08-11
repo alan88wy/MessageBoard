@@ -31,7 +31,7 @@ export class WebService {
     this.http.post(this.BASE_URL + '/messages', message, { responseType: 'text' })
       .subscribe(
         (response: any) => {
-          this.messages.push(response);
+          this.messages.push(JSON.parse(response));
         },
         (error: any) => {
           console.log(error)
