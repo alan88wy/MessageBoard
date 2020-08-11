@@ -5,8 +5,11 @@ import { Injectable } from '@angular/core';
 export class WebService {
 
   BASE_URL = 'http://localhost:5000/api';
+  messages = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {
+    this.getMessages();
+  }
 
   handleError() {
     console.log("Error saving message : ")
@@ -15,13 +18,23 @@ export class WebService {
     // return this.http.get(this.BASE_URL + '/messages')
 
     const params = new HttpParams();
-    return this.http.request('GET', this.BASE_URL + '/messages', { responseType: 'json', params });
+    this.http.request('GET', this.BASE_URL + '/messages', { responseType: 'json', params })
+      .subscribe(
+        (data: any[]) => this.messages = data,
+        err => console.error('Error getting messages: ' + err)
+      );
   }
 
   postMessage(message) {
 
     // return this.http.post(this.BASE_URL + '/messages', message)
-    return this.http.post(this.BASE_URL + '/messages', message, { responseType: 'text' })
-    // .pipe(catchError(err => this.handleError()));
+    this.http.post(this.BASE_URL + '/messages', message, { responseType: 'text' })
+      .subscribe(
+        (response: any) => {
+          this.messages.push(response);
+        },
+        (error: any) => {
+          console.log(error)
+        })
   }
 }

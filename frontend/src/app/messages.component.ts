@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { WebService } from './web.service';
 
 
 @Component({
   selector: 'messages',
   template: `
-  <div *ngFor='let message of messages'>
+  <div *ngFor='let message of webService.messages'>
 
   <mat-card class='card'>
     <!-- <mat-card-header> -->
@@ -21,18 +21,7 @@ import { WebService } from './web.service';
 
   `
 })
-export class MessagesComponent implements OnInit {
-
-  messages = [];
+export class MessagesComponent {
 
   constructor(private webService: WebService) { };
-
-  ngOnInit() {
-    this.webService.getMessages()
-      .subscribe(
-        (data: any[]) => this.messages = data,
-        err => console.error('Error getting messages: ' + err)
-      );
-
-  }
 }
