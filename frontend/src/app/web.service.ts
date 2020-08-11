@@ -1,5 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+
 
 @Injectable()
 export class WebService {
@@ -7,13 +9,17 @@ export class WebService {
   BASE_URL = 'http://localhost:5000/api';
   messages = [];
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private _snackBar: MatSnackBar) {
     this.getMessages();
   }
 
-  handleError() {
-    console.log("Error saving message : ")
+  handleError(errorMessage) {
+    console.log(errorMessage);
+    this._snackBar.open(errorMessage, 'close', {
+      duration: 2000,
+    })
   }
+
   getMessages() {
     // return this.http.get(this.BASE_URL + '/messages')
 
@@ -21,7 +27,9 @@ export class WebService {
     this.http.request('GET', this.BASE_URL + '/messages', { responseType: 'json', params })
       .subscribe(
         (data: any[]) => this.messages = data,
-        err => console.error('Error getting messages: ' + err)
+        (error: any) => {
+          this.handleError('Unable to get messages');
+        }
       );
   }
 
@@ -34,7 +42,7 @@ export class WebService {
           this.messages.push(JSON.parse(response));
         },
         (error: any) => {
-          console.log(error)
+          this.handleError(error.message);
         })
   }
 }
