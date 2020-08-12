@@ -1,16 +1,20 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
+import { Subject } from 'rxjs';
 
 @Injectable()
 export class WebService {
 
-  BASE_URL = 'http://localhost:5000/api';
-  messages = [];
+  private BASE_URL = 'http://localhost:5000/api';
+  private messageStore = [];
+
+  private messageSubject = new Subject();
+
+  messages = this.messageSubject.asObservable();
 
   constructor(private http: HttpClient, private _snackBar: MatSnackBar) {
-    this.getMessages();
+    this.getMessages('');
   }
 
   handleError(errorMessage) {
@@ -20,13 +24,17 @@ export class WebService {
     })
   }
 
-  getMessages() {
+  getMessages(owner) {
     // return this.http.get(this.BASE_URL + '/messages')
 
     const params = new HttpParams();
-    this.http.request('GET', this.BASE_URL + '/messages', { responseType: 'json', params })
+    var user = (owner) ? '/' + owner : '';
+    this.http.request('GET', this.BASE_URL + '/messages' + user, { responseType: 'json', params })
       .subscribe(
-        (data: any[]) => this.messages = data,
+        (data: any[]) => {
+          this.messageStore = data;
+          this.messageSubject.next(this.messageStore);
+        },
         (error: any) => {
           this.handleError('Unable to get messages');
         }
@@ -39,7 +47,8 @@ export class WebService {
     this.http.post(this.BASE_URL + '/messages', message, { responseType: 'text' })
       .subscribe(
         (response: any) => {
-          this.messages.push(JSON.parse(response));
+          this.messageStore.push(JSON.parse(response));
+          this.messageSubject.next(this.messageStore);
         },
         (error: any) => {
           this.handleError(error.message);

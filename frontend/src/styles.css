@@ -1,18 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
+html, body { height: 100%; margin: 8px; }
 body {
   background-color: #eeeeee;
   margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 .card {
   margin-top: 8px;
-  margin-left: 8px;
-  margin-right: 8px;
-}
-
-.nav {
-  /* margin-top: 8px; */
-  margin-left: 8px;
-  /* margin-right: 8px; */
 }
