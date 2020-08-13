@@ -2,11 +2,12 @@ import { Component } from '@angular/core';
 import { WebService } from './web.service';
 import { ActivatedRoute } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
+import { async } from '@angular/core/testing';
 
 @Component({
   selector: 'messages',
   template: `
-  <div *ngFor="let message of webService.messages | async">
+  <div *ngFor="let message of messages | async">
 
   <mat-card class='card'>
 
@@ -26,10 +27,14 @@ import { AsyncPipe } from '@angular/common';
 })
 export class MessagesComponent {
 
+  messages;
+
   constructor(private webService: WebService, private route: ActivatedRoute) { };
 
   ngOnInit(): void {
     let name = this.route.snapshot.params.name;
+
     this.webService.getMessages(name);
+    this.messages = this.webService.messages;
   }
 }
