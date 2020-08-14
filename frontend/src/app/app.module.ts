@@ -20,7 +20,8 @@ import { AppComponent } from './app.component';
 import { WebService } from './web.service';
 import { MessagesComponent } from './messages.component';
 import { AuthService } from './auth.service';
-
+import { LoginComponent } from './login.component';
+import { UserComponent } from './user.component';
 
 
 let routes = [
@@ -40,13 +41,21 @@ let routes = [
     path: 'register',
     component: RegisterComponent
   },
+  {
+    path: 'login',
+    component: LoginComponent
+  },
+  {
+    path: 'user',
+    component: UserComponent
+  },
 ];
 @NgModule({
   declarations: [
     AppComponent, MessagesComponent,
     NewMessageComponent, NavComponent,
     HomeComponent, RegisterComponent,
-
+    LoginComponent, UserComponent
   ],
   imports: [
     BrowserModule, HttpClientModule, AppRoutingModule, BrowserAnimationsModule,

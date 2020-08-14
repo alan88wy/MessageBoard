@@ -1,6 +1,6 @@
-let express = require('express');
-let bodyParser = require('body-parser');
-let jwt = require('jsonwebtoken');
+const express = require('express');
+const bodyParser = require('body-parser');
+const jwt = require('jsonwebtoken');
 
 let app = express();
 let api = express.Router();
@@ -20,7 +20,7 @@ let messages = [
 
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
   next();
 });
 
@@ -30,7 +30,7 @@ api.get('/messages', (req, res) => {
 
 api.get('/messages/:user', (req, res) => {
   var user = req.params.user;
-  var result = messages.filter(message => message.owner == user)
+  var result = messages.filter(message => message.owner == user);
   res.json(result);
 });
 
@@ -40,6 +40,51 @@ api.post('/messages', (req, res) => {
   res.json(req.body);
 });
 
+api.get('/users/me', checkAuthenticated, (req, res) => {
+  let user = users[req.user];
+
+  delete user.password;
+  delete user.confirmPassword;
+
+  user.firstName = req.body.firstName;
+  user.lastName = req.body.lastName;
+
+  let data = JSON.stringify(users);
+  fs.writeFileSync('login.json', data);
+
+  res.send(user);
+
+});
+
+api.post('/users/me', checkAuthenticated, (req, res) => {
+
+  let user = users[req.user];
+
+  delete user.password;
+  delete user.confirmPassword;
+
+  user.firstName = req.body.firstName;
+  user.lastName = req.body.lastName;
+
+  res.json(user);
+
+});
+
+auth.post('/login', (req, res) => {
+
+  var user = users.find(user => user.email == req.body.email);
+
+  if (!user) {
+    sendAuthError(res);
+  }
+
+  if (user.password == req.body.password) {
+    sendToken(user, res);
+  } else {
+    sendAuthError(res);
+  }
+});
+
 auth.post('/register', (req, res) => {
 
   let index = users.push(req.body) - 1;
@@ -47,10 +92,37 @@ auth.post('/register', (req, res) => {
 
   user.id = index;
 
-  let token = jwt.sign(user.id, 'abc123'); // for security reason, you put the secret somewhere else.
+  sendToken(user, res);
 
-  res.json({firstName: user.firstName, token});
 });
+
+function sendAuthError(res) {
+  res.send({success: false, message: 'Email or password incorrect'})
+}
+
+function sendToken(user, res) {
+  let token = jwt.sign({id: user.id, email: user.email}, 'abc123'); // for security reason, you put the secret somewhere else.
+
+  res.json({success: true, firstName: user.firstName, token});
+}
+
+function checkAuthenticated(req, res, next) {
+
+  if (!req.headers.authorization)
+    return res.status(401).send({message: 'Unauthorized request. Missing authentication header'});
+
+  let token = req.headers.authorization.split(' ')[1];
+
+  let payload = jwt.decode(token);
+
+  if (!payload)
+    return res.status(401).send({message: 'Unauthorize request. Authorization header invalid'});
+
+  req.user = payload.id;
+
+  next();
+
+}
 
 app.use('/api', api);
 app.use('/auth', auth);
