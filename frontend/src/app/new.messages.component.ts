@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { WebService } from './web.service';
-
+import { AuthService } from './auth.service';
 
 @Component({
   selector: 'new-message',
@@ -8,17 +8,13 @@ import { WebService } from './web.service';
     <mat-card class='card'>
       <mat-card-content>
           <!-- <form> -->
-            <mat-form-field>
-              <!-- <mat-label>Favorite food</mat-label> -->
-              <input [(ngModel)]="message.owner" matInput placeholder="Name" >
-            </mat-form-field>
 
             <mat-form-field >
               <!-- <mat-label>Leave a comment</mat-label> -->
               <textarea [(ngModel)]="message.text" matInput placeholder="Message"></textarea>
             </mat-form-field>
       </mat-card-content>
-            <button (click)="post()" mat-stroked-button color="primary">POST</button>
+            <button (click)="post()" mat-raised-button color="primary">POST</button>
         <!-- </form> -->
 
     </mat-card>
@@ -27,11 +23,11 @@ import { WebService } from './web.service';
 export class NewMessageComponent {
 
   message = {
-    owner: "",
+    owner: this.auth.name,
     text: ""
   }
 
-  constructor(private webService: WebService) {
+  constructor(private webService: WebService, private auth: AuthService) {
 
   };
 

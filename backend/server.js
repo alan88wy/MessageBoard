@@ -12,10 +12,18 @@ app.use(bodyParser.json());
 
 let users = [];
 
-let messages = [
-  { text: 'Some Text', owner: 'Alan' },
-  { text: 'Some Other Text', owner: 'James'},
-  { text: 'Another text', owner: 'Jessie'}
+let messages = [{
+    text: 'Some Text',
+    owner: 'Alan'
+  },
+  {
+    text: 'Some Other Text',
+    owner: 'James'
+  },
+  {
+    text: 'Another text',
+    owner: 'Jessie'
+  }
 ];
 
 app.use((req, res, next) => {
@@ -41,16 +49,11 @@ api.post('/messages', (req, res) => {
 });
 
 api.get('/users/me', checkAuthenticated, (req, res) => {
+
   let user = users[req.user];
 
   delete user.password;
   delete user.confirmPassword;
-
-  user.firstName = req.body.firstName;
-  user.lastName = req.body.lastName;
-
-  let data = JSON.stringify(users);
-  fs.writeFileSync('login.json', data);
 
   res.send(user);
 
@@ -97,26 +100,40 @@ auth.post('/register', (req, res) => {
 });
 
 function sendAuthError(res) {
-  res.send({success: false, message: 'Email or password incorrect'})
+  res.send({
+    success: false,
+    message: 'Email or password incorrect'
+  })
 }
 
 function sendToken(user, res) {
-  let token = jwt.sign({id: user.id, email: user.email}, 'abc123'); // for security reason, you put the secret somewhere else.
+  let token = jwt.sign({
+    id: user.id,
+    email: user.email
+  }, 'abc123'); // for security reason, you put the secret somewhere else.
 
-  res.json({success: true, firstName: user.firstName, token});
+  res.json({
+    success: true,
+    firstName: user.firstName,
+    token
+  });
 }
 
 function checkAuthenticated(req, res, next) {
 
   if (!req.headers.authorization)
-    return res.status(401).send({message: 'Unauthorized request. Missing authentication header'});
+    return res.status(401).send({
+      message: 'Unauthorized request. Missing authentication header'
+    });
 
   let token = req.headers.authorization.split(' ')[1];
 
   let payload = jwt.decode(token);
 
   if (!payload)
-    return res.status(401).send({message: 'Unauthorize request. Authorization header invalid'});
+    return res.status(401).send({
+      message: 'Unauthorize request. Authorization header invalid'
+    });
 
   req.user = payload.id;
 

@@ -47,10 +47,10 @@ export class WebService {
   postMessage(message) {
 
     // return this.http.post(this.BASE_URL + '/messages', message)
-    this.http.post(this.BASE_URL + '/messages', message, { responseType: 'text' })
+    this.http.post(this.BASE_URL + '/messages', message, { responseType: 'json' })
       .subscribe(
         (response: any) => {
-          this.messageStore.push(JSON.parse(response));
+          this.messageStore.push(response);
           this.messageSubject.next(this.messageStore);
         },
         (error: any) => {
@@ -59,26 +59,27 @@ export class WebService {
   }
 
   getUser() {
-    this.http.get(this.BASE_URL + '/users/me', { headers: this.auth.tokenHeader, responseType: 'json' })
-      .subscribe(
-        (data: any[]) => {
-          return data
-        },
-        (error: any) => {
-          this.handleError('Unable to get messages');
-          return {}
-        }
-      );
+    return this.http.get(this.BASE_URL + '/users/me',
+      { headers: this.auth.tokenHeader, responseType: 'json' })
+    // .subscribe(
+    //   (data: any[]) => {
+    //     return data
+    //   },
+    //   (error: any) => {
+    //     this.handleError('Unable to get messages');
+    //     return {}
+    //   }
+    // );
   }
 
   saveUser(userData) {
-    this.http.post(this.BASE_URL + '/users/me', userData, { headers: this.auth.tokenHeader, responseType: 'json' })
+    return this.http.post(this.BASE_URL + '/users/me', userData, { headers: this.auth.tokenHeader, responseType: 'json' })
       .subscribe(
         (response: any) => {
           this.auth.setName(response.firstName);
         },
         (error: any) => {
-          this.handleError('Unable to get messages');
+          this.handleError('Unable to save user data');
           return {}
         }
       );

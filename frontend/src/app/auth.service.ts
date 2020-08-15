@@ -59,11 +59,14 @@ export class AuthService {
 
   authenticate(res) {
 
-    if (res.token) {
-      localStorage.setItem(this.TOKEN_KEY, res.token);
-      localStorage.setItem(this.NAME_KEY, res.firstName);
-      this.router.navigate(['/']);
-    }
+    var authResponse = res.json();
+
+    if (!authResponse.token)
+      return;
+
+    localStorage.setItem(this.TOKEN_KEY, res.token);
+    localStorage.setItem(this.NAME_KEY, res.firstName);
+    this.router.navigate(['/']);
 
   }
 

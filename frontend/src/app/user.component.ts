@@ -17,7 +17,7 @@ import { WebService } from './web.service';
             </mat-form-field>
 
        </mat-card-content>
-            <button (click)="post()" mat-stroked-button color="primary">Save Changes</button>
+            <button (click)="saveUser(model)" mat-raised-button color="primary">Save Changes</button>
         <!-- </form> -->
 
     </mat-card>
@@ -34,8 +34,20 @@ export class UserComponent {
 
   };
 
-  post() {
-    this.webService.saveUser(this.model);
+  ngOnInit() {
+
+    this.webService.getUser()
+      .subscribe((res: any) => {
+
+        this.model.firstName = res.firstName;
+        this.model.lastName = res.lastName;
+
+      })
+
+  }
+
+  saveUser(userData) {
+    this.webService.saveUser(userData);
   }
 
 }
