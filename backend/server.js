@@ -1,10 +1,11 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const jwt = require('jsonwebtoken');
+import express from 'express';
+import bodyParser from 'body-parser';
+import jwt from 'jsonwebtoken';
 
 let app = express();
 let api = express.Router();
 let auth = express.Router();
+let PORT = 5000;
 
 app.use(bodyParser.json());
 
@@ -103,7 +104,7 @@ function sendAuthError(res) {
   res.send({
     success: false,
     message: 'Email or password incorrect'
-  })
+  });
 }
 
 function sendToken(user, res) {
@@ -144,6 +145,6 @@ function checkAuthenticated(req, res, next) {
 app.use('/api', api);
 app.use('/auth', auth);
 
-app.listen(5000, () => {
+app.listen(PORT, () => {
   console.info('Listening on port 5000');
 });
