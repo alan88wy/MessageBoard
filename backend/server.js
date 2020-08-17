@@ -1,12 +1,14 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import jwt from 'jsonwebtoken';
+import helmet from 'helmet';
 
 let app = express();
 let api = express.Router();
 let auth = express.Router();
 let PORT = 5000;
 
+app.use(helmet());
 app.use(bodyParser.json());
 
 // app.use(express.static('public'))
